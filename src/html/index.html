@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hello World</title>
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/es6-shim/0.34.0/es6-shim.js"></script>
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.src.js"></script>
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/rxjs/4.0.7/rx.js"></script>
+<script language="javascript" src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script language="javascript">
+(function(){
+
+	System.config({
+		packages: {        
+		  app: {
+			format: 'register',
+			defaultExtension: 'js'
+		  }
+		},	
+		defaultJSExtensions: true
+	});
+	  
+	$(document).ready(function(e) {
+        var HelloWorld;
+		System.import("http://code.jquery.com/jquery-2.1.4.min.js").then(function(jx){
+			console.log("jquery",jx('h1').length);
+		});
+		System.import("/js/libs/HelloWorld").then(function(m){		
+			console.log("module:",m.HelloWorld);
+			HelloWorld = new m.HelloWorld();
+			$('h1').html(HelloWorld.words())		
+			HelloWorld.say(HelloWorld.words());	
+		});
+
+	});
+	  
+})();
+</script>
+</head>
+
+<body>
+<h1></h1>
+
+</body>
+</html>
