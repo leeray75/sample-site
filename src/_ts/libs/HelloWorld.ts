@@ -1,7 +1,8 @@
 export class HelloWorld {
-	constructor(){}
+	constructor(){
+	};
     public words():string {
-        return "Hello World!"
+        return "Hello World 2!"
     }
 
     public say(words):void {

@@ -6,8 +6,9 @@ System.register([], function(exports_1) {
             HelloWorld = (function () {
                 function HelloWorld() {
                 }
+                ;
                 HelloWorld.prototype.words = function () {
-                    return "Hello World!";
+                    return "Hello World 2!";
                 };
                 HelloWorld.prototype.say = function (words) {
                     console.log(words);
