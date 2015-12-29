@@ -60,8 +60,13 @@ gulp.task('minify-js', function(cb) {
     }))
     .pipe(gulp.dest('./build/Release/js'));
 });
+gulp.task('copy-fonts', function(cb) {
+  return gulp.src('./src/fonts/**/*')    
+    .pipe(gulp.dest('./build/Release/fonts'));
+});
 
-gulp.task('build',['minify-css','minify-js'],function(){
+
+gulp.task('build',['minify-css','minify-js','copy-fonts'],function(){
     watch('./src/js/**/*.js', function(cb){
 		gulp.start('minify-js');		
 	});
