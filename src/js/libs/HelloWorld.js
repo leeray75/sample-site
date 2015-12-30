@@ -8,7 +8,7 @@ System.register([], function(exports_1) {
                 }
                 ;
                 HelloWorld.prototype.words = function () {
-                    return "Hello World 2!";
+                    return "Hello World";
                 };
                 HelloWorld.prototype.say = function (words) {
                     console.log(words);
