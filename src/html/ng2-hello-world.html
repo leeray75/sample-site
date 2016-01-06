@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Angular 2 - Hello World Example</title>
+<!-- <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+<link rel="stylesheet" type="text/css" href="/build/Release/css/global-styles.css">
+</head>
+
+<body role="document">
+
+<!-- 1. Load libraries --> 
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/es6-shim/0.34.0/es6-shim.js"></script> 
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.src.js"></script>
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/angular2-polyfills.min.js"></script> 
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/Rx.min.js"></script> 
+<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/angular2.dev.js"></script> 
+<!-- 2. Configure SystemJS --> 
+<script>
+	var MySite = {
+		//appSrc: '/src'
+		appSrc: '/build/Release',
+		onError: function(error){
+			console.warn("Error:",error);	
+		}
+	}
+  System.config({
+	typescriptOptions: { emitDecoratorMetadata: true }, 
+	packages: {'src': {defaultExtension: 'js'}},
+  });
+</script> 
+<!-- 3. Bootstrap --> 
+<script>
+	
+  System.import('angular2/platform/browser').then(function(ng){
+	System.import(MySite.appSrc+'/js/ng2-apps/hello-world-min.js').then(function(src) {
+	  ng.bootstrap(src.HelloWorld);
+	},MySite.onError);
+  },MySite.onError);   
+</script>
+<div class="container theme-showcase" role="main">
+  <hello-world>Loading...</hello-world>
+</div>
+<!-- /container -->
+
+</body>
+</html>
