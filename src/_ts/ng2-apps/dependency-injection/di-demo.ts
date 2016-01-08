@@ -1,12 +1,20 @@
 declare var MySite: any;
+
 import {Component} from 'angular2/core';
 import {UiTabs, UiPane} from './ui-tabs';
+
+interface Detail{
+	title: string;
+	text: string
+}
+
 @Component({
   selector: 'di-demo',
   templateUrl: MySite.appSrc+'/templates/ng2/dependency-injection/di-demo.html',
   directives: [UiTabs, UiPane]
 })
 export class DiDemo {
+
   details: Detail[] = [];
   id: number = 0;
   addDetail() {
