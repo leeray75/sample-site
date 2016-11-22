@@ -3,6 +3,7 @@ var gulpif = require('gulp-if');
 var map  = require('map-stream');
 var sass = require('gulp-sass');
 var ts = require('gulp-typescript');
+var sourcemaps = require('gulp-sourcemaps');
 var gls = require('gulp-live-server');
 var watch = require('gulp-watch');
 var rename = require("gulp-rename");
@@ -10,6 +11,15 @@ var debug = require('gulp-debug');
 var rimraf = require('gulp-rimraf');
 var minify = require('gulp-minify');
 var nano = require('gulp-cssnano');
+
+var fs = require('fs');
+var path = require('path');
+var merge = require('merge-stream');
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
+
+
 var htmlmin = require('gulp-html-minifier');
 var _scssFiles = 'src/_scss/**/*.scss';
 var _tsFiles = 'src/_ts/**/*.ts';
@@ -43,6 +53,7 @@ gulp.task('typescript', function() {
     return gulp.src(_tsFiles )
         .pipe(ts(tsProject))
         .pipe(gulp.dest('build/dev/js'));
+
 });
 
 //Watch task
@@ -136,10 +147,10 @@ function doWatch(){
     watch('./build/dev/js/**/*.js', function(cb){
 		
 		var file = "."+arguments[0].path.replace(arguments[0].cwd,'').replace(/\\/g, "/");
-		var x = file.split("/");
-		var dest = file.replace("./build/dev","./build/Release").replace("/"+x[x.length-1],"");		
-		gulp.src(file)
-		.pipe(debug())
+		var scriptsPath = file.substring(0, file.lastIndexOf("/"));
+		var dest = scriptsPath.replace("./build/dev","./build/Release");	
+		
+		gulp.src(file)		
 		.pipe(minify({
 			/* exclude: ['tasks'], */
 			ignoreFiles: ['.combo.js','.min.js','-min.js']
@@ -147,10 +158,26 @@ function doWatch(){
 		.pipe(rename(renameMinJsFile))
 		.pipe(gulp.dest(dest));
 	});
+	/* 
+    watch(['./build/dev/js/ng2-apps/**//*.js','!./build/dev/js/ng2-apps/**//*.combo.js'], function(cb){
+		var file = "."+arguments[0].path.replace(arguments[0].cwd,'').replace(/\\/g, "/");
+		var scriptsPath = file.substring(0, file.lastIndexOf("/"));
+		var dest = scriptsPath.replace("./build/dev","./build/Release");	
+		var pathsArray = scriptsPath.split("/");
+		var folderName = pathsArray[pathsArray.length-1];
+		console.log("scriptsPath:",scriptsPath);
+		console.log("folderName:",folderName);
+		
+		gulp.src([scriptsPath+'/**//*.js','!'+scriptsPath+'/**//*.combo.js'])
+        .pipe(concat(folderName + '.combo.js'))
+		.pipe(debug())
+        .pipe(gulp.dest(scriptsPath));
+	});	
+	*/
     watch('./src/css/**/*.css', function(cb){		
 		var file = "."+arguments[0].path.replace(arguments[0].cwd,'').replace(/\\/g, "/");
-		var x = file.split("/");		
-		var dest = file.replace("./build/dev","./build/Release").replace("/"+x[x.length-1],"");	
+		var filePath = file.substring(0, file.lastIndexOf("/"));
+		var dest = filePath.replace("./build/dev","./build/Release");
 		gulp.src(file)
 		.pipe(debug())
 		.pipe(nano())
