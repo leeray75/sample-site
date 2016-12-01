@@ -18,7 +18,7 @@ export class TodoApp {
     return this.todos.reduce((count, todo: Todo) => count + todo.done, 0);
   }
   archive(): void {
-    var oldTodos = this.todos;
+    let oldTodos = this.todos;
     this.todos = [];
     oldTodos.forEach((todo: Todo) => {
       if (!todo.done) this.todos.push(todo);

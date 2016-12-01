@@ -26,7 +26,7 @@
 			staticHost: _staticHost,
 			appSrc: _staticHost+'/build/Release/js/ng2-apps/tour-of-heroes/',
 			templatesSrc: _staticHost+"/build/Release/templates/ng2/tour-of-heroes/",
-			stylesSrc: _staticHost+"/build/Release/css/ng2-apps/tour-of-heroes/",
+			stylesSrc: "../../../../build/Release/css/ng2-apps/tour-of-heroes/",
 			baseHref: "/src/_html/ng2-tour-of-heroes.html/",
 			onError: function(error){
 				console.warn("Error:",error);	
@@ -44,7 +44,7 @@
 			}
 		},
 		map:{
-			"app": MySite.appSrc+'/js/ng2-apps/tour-of-heroes'
+			"app": '/build/Release/js/ng2-apps/tour-of-heroes'
 		}
 	});
 </script> 
