@@ -56,6 +56,8 @@ gulp.task('typescript', function() {
 
 });
 
+
+
 //Watch task
 gulp.task('watch', function() {
 	console.log("watching _scss and _ts files");
@@ -75,6 +77,18 @@ gulp.task('watch', function() {
 	*/
 });
 
+
+(function(){
+	var jsFiles = './build/dev/js/**/*',  
+    jsDest = './build/Release/js';
+	
+	gulp.task('concat-scripts', function() {  
+		console.log("running concat-scripts");
+		return gulp.src(jsFiles)
+			.pipe(concat('scripts-combo.js'))
+			.pipe(gulp.dest(jsDest));
+	});
+})();
 
 gulp.task('clean-css', function(cb) {
 	return gulp.src('./src/css', { read: false }) // much faster
@@ -111,6 +125,7 @@ gulp.task('minify-js', function(cb) {
 	.pipe(debug())
     .pipe(gulp.dest('./build/Release/js'));
 });
+
 gulp.task('copy-fonts', function(cb) {
 	console.log("copy fonts");
   return gulp.src('./src/fonts/**/*')
@@ -174,7 +189,9 @@ function doWatch(){
         .pipe(gulp.dest(scriptsPath));
 	});	
 	*/
-    watch('./src/css/**/*.css', function(cb){		
+
+    watch('./build/dev/css/**/*.css', function(cb){
+		console.log("watch css");
 		var file = "."+arguments[0].path.replace(arguments[0].cwd,'').replace(/\\/g, "/");
 		var filePath = file.substring(0, file.lastIndexOf("/"));
 		var dest = filePath.replace("./build/dev","./build/Release");
@@ -189,7 +206,7 @@ function doWatch(){
 	});
 	
 }
-gulp.task('build',['minify-css','minify-js','copy-fonts','copy-templates','copy-images'],function(){
+gulp.task('build',['minify-css','minify-js','concat-scripts','copy-fonts','copy-templates','copy-images'],function(){
 	console.log("finished build, doing watch");
 	doWatch();
 });

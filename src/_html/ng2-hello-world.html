@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<base href="/">
 <meta charset="utf-8">
 <title>Angular 2 - Hello World Example</title>
 <!-- <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
@@ -10,37 +11,79 @@
 <body role="document">
 
 <!-- 1. Load libraries --> 
-<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/es6-shim/0.34.0/es6-shim.js"></script> 
-<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/systemjs/0.18.4/system.src.js"></script>
-<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/angular2-polyfills.min.js"></script> 
-<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/Rx.min.js"></script> 
-<script language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.0/angular2.dev.js"></script> 
+<!--
+    <script src="/node_modules/core-js/client/shim.min.js"></script>
+    <script src="/node_modules/zone.js/dist/zone.js"></script>
+    <script src="/node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="/node_modules/systemjs/dist/system.src.js"></script>
+-->
+    <script src="//unpkg.com/core-js/client/shim.min.js"></script>
+    <script src="//unpkg.com/zone.js@0.6.25?main=browser"></script>
+    <script src="//unpkg.com/reflect-metadata@0.1.8"></script>
+    <script src="//unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
 <!-- 2. Configure SystemJS --> 
 <script>
-	var MySite = {
-		//appSrc: '/src'
-		appSrc: '/build/Release',
+(function(){
+	window.MySite = {
+		templateSrc: '/build/Release/templates/ng2/hello-world',
+		stylesSrc: 'build/Release/css/ng2-apps/hello-world',
 		onError: function(error){
 			console.warn("Error:",error);	
 		}
 	}
+	
+})();
+
+/**
+ * System configuration for Angular samples
+ * Adjust as necessary for your application needs.
+ */
+(function (global) {
   System.config({
-	typescriptOptions: { emitDecoratorMetadata: true }, 
-	packages: {'src': {defaultExtension: 'js'}},
+    paths: {
+      // paths serve as alias
+      'npm:': '/node_modules/'
+    },
+    // map tells the System loader where to look for things
+    map: {
+      // our app is within the app folder
+      app: '/build/Release/js/ng2-apps',
+
+      // angular bundles
+      '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
+      '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
+      '@angular/compiler': 'npm:@angular/compiler/bundles/compiler.umd.js',
+      '@angular/platform-browser': 'npm:@angular/platform-browser/bundles/platform-browser.umd.js',
+      '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+      '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
+      '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
+      '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
+
+      // other libraries
+      'rxjs':                      'npm:rxjs',
+      'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
+    },
+    // packages tells the System loader how to load when no filename and/or no extension
+    packages: {
+      app: {
+        main: './hello-world/main.js',
+        defaultExtension: 'js'
+      },
+      rxjs: {
+        defaultExtension: 'js'
+      }
+    }
   });
-</script> 
+})(this);
+
+</script>
 <!-- 3. Bootstrap --> 
 <script>
-	
-  System.import('angular2/platform/browser').then(function(ng){
-	System.import(MySite.appSrc+'/js/ng2-apps/hello-world-min.js').then(function(src) {
-	  ng.bootstrap(src.HelloWorld);
-	},MySite.onError);
-  },MySite.onError);   
+	System.import('app').catch(function(err){ console.error(err); });
 </script>
-<div class="container theme-showcase" role="main">
+<main class="container theme-showcase" role="main">
   <hello-world>Loading...</hello-world>
-</div>
+</main>
 <!-- /container -->
 
 </body>
