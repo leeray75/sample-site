@@ -23,6 +23,7 @@ var uglify = require('gulp-uglify');
 var htmlmin = require('gulp-html-minifier');
 var _scssFiles = 'src/_scss/**/*.scss';
 var _tsFiles = 'src/_ts/**/*.ts';
+
 var tsProject = ts.createProject('tsconfig.json');
 var server = gls.static(['.']);
 if (!String.prototype.endsWith) {
@@ -42,6 +43,14 @@ var renameMinJsFile = function(path){
 		path.extname = ".min.js";
 	}		
 }
+
+function getFolders(dir) {
+	return fs.readdirSync(dir)
+	  .filter(function(file) {
+		return fs.statSync(path.join(dir, file)).isDirectory();
+	  });
+}
+	
 gulp.task('sass', function() {
     return gulp.src(_scssFiles)
         .pipe(sass().on('error', sass.logError))
@@ -50,9 +59,25 @@ gulp.task('sass', function() {
 
 gulp.task('typescript', function() {
 	console.log("task: typescript");
-    return gulp.src(_tsFiles )
-        .pipe(ts(tsProject))
+	var scriptsPath = './src/_ts/ng2-apps';
+	var folders = getFolders(scriptsPath);
+	
+	var tasks = folders.map(function(folder) {
+		var tsProject = ts.createProject('tsconfig.json',{
+			outFile: folder+".combo.js"
+		});
+		var src = path.join(scriptsPath, folder, '/**/*.ts');
+		console.log("TEST: "+src);
+		  return gulp.src(src)
+			.pipe(tsProject())
+			.pipe(gulp.dest('build/dev/js/ng2-apps/'+folder));    
+	});
+	tsProject = ts.createProject('tsconfig.json');
+    var tsTask = gulp.src(_tsFiles )
+        .pipe(tsProject())
         .pipe(gulp.dest('build/dev/js'));
+	
+	return merge(tasks, tsTask);
 
 });
 
@@ -79,15 +104,62 @@ gulp.task('watch', function() {
 
 
 (function(){
-	var jsFiles = './build/dev/js/**/*',  
+	var jsFiles = './build/dev/js/**/*', 
     jsDest = './build/Release/js';
 	
+	/*
 	gulp.task('concat-scripts', function() {  
 		console.log("running concat-scripts");
 		return gulp.src(jsFiles)
 			.pipe(concat('scripts-combo.js'))
 			.pipe(gulp.dest(jsDest));
 	});
+	*/
+
+	gulp.task('minify-js', function(cb) {
+		console.log("minify-js");
+	  return gulp.src('./build/dev/js/**/*.js')
+		.pipe(debug())
+		.pipe(minify({
+			/* exclude: ['tasks'], */
+			ignoreFiles: ['.min.js','-min.js']
+		}))
+		.pipe(rename(renameMinJsFile))
+		.pipe(debug())
+		.pipe(gulp.dest('./build/Release/js'));
+	});
+	
+
+	
+	gulp.task('concat-scripts', function() {
+	   var scriptsPath = './build/Release/js/ng2-apps';
+	   var folders = getFolders(scriptsPath);
+	
+	   var tasks = folders.map(function(folder) {
+		  return gulp.src(path.join(scriptsPath, folder, '/**/*.js'))
+			// concat into foldername.js
+			.pipe(concat(folder + '.combo.js'))
+			// write to output
+			.pipe(gulp.dest(scriptsPath)) 
+			// minify
+			.pipe(uglify())    
+			// rename to folder.min.js
+			.pipe(rename(folder + '.combo.min.js')) 
+			// write to output again
+			.pipe(gulp.dest(scriptsPath));    
+	   });
+	
+	   // process all remaining files in scriptsPath root into main.js and main.min.js files
+	   var root = gulp.src(path.join(scriptsPath, '/*.js'))
+			.pipe(concat('main.js'))
+			.pipe(gulp.dest(scriptsPath))
+			.pipe(uglify())
+			.pipe(rename('main.min.js'))
+			.pipe(gulp.dest(scriptsPath));
+	
+	   return merge(tasks, root);
+	});
+	
 })();
 
 gulp.task('clean-css', function(cb) {
@@ -113,18 +185,7 @@ gulp.task('minify-css', function(cb) {
         .pipe(nano())
         .pipe(gulp.dest('./build/Release/css'));
 });
-gulp.task('minify-js', function(cb) {
-	console.log("minify-js");
-  return gulp.src('./build/dev/js/**/*.js')
-	.pipe(debug())
-    .pipe(minify({
-        /* exclude: ['tasks'], */
-        ignoreFiles: ['.combo.js','.min.js','-min.js']
-    }))
-	.pipe(rename(renameMinJsFile))
-	.pipe(debug())
-    .pipe(gulp.dest('./build/Release/js'));
-});
+
 
 gulp.task('copy-fonts', function(cb) {
 	console.log("copy fonts");
@@ -206,8 +267,9 @@ function doWatch(){
 	});
 	
 }
-gulp.task('build',['minify-css','minify-js','concat-scripts','copy-fonts','copy-templates','copy-images'],function(){
+gulp.task('build',['minify-css','minify-js','copy-fonts','copy-templates','copy-images'],function(){
 	console.log("finished build, doing watch");
+	//gulp.start('concat-scripts');
 	doWatch();
 });
 

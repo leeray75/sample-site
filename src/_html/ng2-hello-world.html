@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<base href="/">
+<script>document.write('<base href="' + document.location + '" />');</script>
 <meta charset="utf-8">
 <title>Angular 2 - Hello World Example</title>
 <!-- <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
@@ -25,8 +25,8 @@
 <script>
 (function(){
 	window.MySite = {
-		templateSrc: '/build/Release/templates/ng2/hello-world',
-		stylesSrc: 'build/Release/css/ng2-apps/hello-world',
+		templateSrc: '../../build/Release/templates/ng2/hello-world',
+		stylesSrc: '../../build/Release/css/ng2-apps/hello-world',
 		onError: function(error){
 			console.warn("Error:",error);	
 		}
@@ -42,12 +42,13 @@
   System.config({
     paths: {
       // paths serve as alias
-      'npm:': '/node_modules/'
+      //'npm:': '/node_modules/'
+	  'npm:': '//unpkg.com/'
     },
     // map tells the System loader where to look for things
     map: {
       // our app is within the app folder
-      app: '/build/Release/js/ng2-apps',
+      app: '/build/Release/js/ng2-apps/hello-world',
 
       // angular bundles
       '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -64,22 +65,27 @@
       'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
+	
     packages: {
-      app: {
-        main: './hello-world/main.js',
+    /*
+	  app: {
+        //main: './hello-world/main.js',
         defaultExtension: 'js'
       },
+	  */
       rxjs: {
         defaultExtension: 'js'
       }
     }
+	
   });
 })(this);
 
 </script>
 <!-- 3. Bootstrap --> 
+<script src="/build/Release/js/ng2-apps/hello-world/hello-world.combo.min.js"></script>
 <script>
-	System.import('app').catch(function(err){ console.error(err); });
+	System.import('main').catch(function(err){ console.error(err); });
 </script>
 <main class="container theme-showcase" role="main">
   <hello-world>Loading...</hello-world>
